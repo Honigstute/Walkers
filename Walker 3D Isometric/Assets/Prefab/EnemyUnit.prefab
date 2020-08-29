@@ -479,7 +479,7 @@ GameObject:
   - component: {fileID: 4354782627864597575}
   - component: {fileID: 4354782627864597568}
   m_Layer: 8
-  m_Name: PlayerUnit (4)
+  m_Name: EnemyUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -589,6 +589,7 @@ MonoBehaviour:
   initiateMovement: 0
   selected: 0
   hasMoved: 0
+  playerNumber: 2
   agent: {fileID: 4354782627864597594}
   worldPosition: {x: 0, y: 0, z: 0}
   cam: {fileID: 0}

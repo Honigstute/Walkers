@@ -9,7 +9,6 @@ public class GameMaster : MonoBehaviour
 
     public int playerTurn = 1;
 
-
     // Start is called before the first frame update
     void Start()
     {
@@ -25,9 +24,12 @@ public class GameMaster : MonoBehaviour
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////////
+    /////////////////////////// End of Turn ///////////////////////////////////////
+    
     void EndTurn()
     {
-        if(playerTurn == 1)
+        if (playerTurn == 1)
         {
             playerTurn = 2;
         } else if (playerTurn == 2)
@@ -35,12 +37,17 @@ public class GameMaster : MonoBehaviour
             playerTurn = 1;
         }
 
-        if(selectedUnit != null)
+        if (selectedUnit != null)
         {
             selectedUnit.selected = false;
             selectedUnit = null;
+            
         }
 
+        foreach (UnitController unitController in FindObjectsOfType<UnitController>())
+        {
+            unitController.transform.Find("Sphere").gameObject.SetActive(false); //RED SELECTION SPHERE
+            unitController.actionPoints = unitController.actionPointsMaximum;
+        }
     }
-
 }

@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 622904532674071980}
   - component: {fileID: 622904532674071952}
   - component: {fileID: 622904532674071955}
-  - component: {fileID: 622904532674071983}
   - component: {fileID: 622904532674071954}
   - component: {fileID: -3693131264632305532}
+  - component: {fileID: 8549286846960584991}
+  - component: {fileID: 622904532674071983}
   m_Layer: 8
   m_Name: PlayerUnit
   m_TagString: Untagged
@@ -110,32 +111,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &622904532674071983
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 622904532674071957}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7cd52b6357ed5349bfc3c84657d058a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectionTimer: 0
-  activateMovement: 0
-  initiateMovement: 0
-  selected: 0
-  hasMoved: 0
-  agent: {fileID: 622904532674071982}
-  worldPosition: {x: 0, y: 0, z: 0}
-  cam: {fileID: 0}
-  character: {fileID: 622904532674071954}
-  actionPoints: 0
-  textActionPoints: {fileID: 0}
-  moveRange: 0
-  calMoveRange: 0
-  textMoveRange: {fileID: 0}
 --- !u!114 &622904532674071954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -262,6 +237,48 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!114 &8549286846960584991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 622904532674071957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fa82a309e574ee4995ef5f0d39c5bd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &622904532674071983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 622904532674071957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7cd52b6357ed5349bfc3c84657d058a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemiesInRange: []
+  actionPoints: 0
+  actionPointsMaximum: 0
+  textActionPoints: {fileID: 0}
+  attackRange: 0
+  moveRange: 0
+  calMoveRange: 0
+  textMoveRange: {fileID: 0}
+  selectionTimer: 0
+  activateMovement: 0
+  initiateMovement: 0
+  selected: 0
+  hasMoved: 0
+  playerNumber: 1
+  agent: {fileID: 622904532674071982}
+  worldPosition: {x: 0, y: 0, z: 0}
+  cam: {fileID: 0}
+  character: {fileID: 622904532674071954}
 --- !u!1 &5219655321995836856
 GameObject:
   m_ObjectHideFlags: 0
