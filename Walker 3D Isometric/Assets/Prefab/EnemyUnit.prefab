@@ -480,7 +480,7 @@ GameObject:
   - component: {fileID: 4354782627864597568}
   m_Layer: 8
   m_Name: EnemyUnit
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -584,6 +584,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7cd52b6357ed5349bfc3c84657d058a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemiesInRange: []
+  actionPoints: 0
+  actionPointsMaximum: 0
+  textActionPoints: {fileID: 0}
+  attackRange: 0
+  destination: {fileID: 0}
+  enemyRange: 0
+  moveRange: 0
+  calMoveRange: 0
+  textMoveRange: {fileID: 0}
   selectionTimer: 0
   activateMovement: 0
   initiateMovement: 0
@@ -594,11 +604,10 @@ MonoBehaviour:
   worldPosition: {x: 0, y: 0, z: 0}
   cam: {fileID: 0}
   character: {fileID: 4354782627864597575}
-  actionPoints: 0
-  textActionPoints: {fileID: 0}
-  moveRange: 0
-  calMoveRange: 0
-  textMoveRange: {fileID: 0}
+  anObject: {fileID: 0}
+  textEnemySpace: {fileID: 0}
+  unitconarr: []
+  Myposi: {fileID: 0}
 --- !u!114 &4354782627864597575
 MonoBehaviour:
   m_ObjectHideFlags: 0

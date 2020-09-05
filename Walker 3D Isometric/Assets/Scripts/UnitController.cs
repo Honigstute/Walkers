@@ -8,12 +8,11 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 using UnityStandardAssets.Characters.ThirdPerson;
+//using Boo.Lang.Environments;
 
 public class UnitController : MonoBehaviour
 {
-
     public List<UnitController> enemiesInRange = new List<UnitController>();
-
 
     public float actionPoints;
     public float actionPointsMaximum; 
@@ -37,21 +36,25 @@ public class UnitController : MonoBehaviour
     public bool hasMoved; //Not in use
     public int playerNumber; //Changes Team
 
-    public NavMeshAgent agent;
-    GameMaster gm;
-    private NavMeshPath thePath;
+    public NavMeshAgent agent; //The Unit itself
+    GameMaster gm; //Accesses the Gamemaster script
+    private NavMeshPath thePath; //The Path which is been accessed by the rangechecker
     private float elapsed = 0.0f;
     public Vector3 worldPosition;
     public Camera cam;
     public ThirdPersonCharacter character;
-    private LineRenderer lineRendererPath;
+    private LineRenderer lineRendererPath; //The line which is been drawn along the Path
 
-    private bool something = true;
+    private Transform cursorProjector;
+        
 
     private void Start()
     {
         activateMovement = false;
         initiateMovement = false;
+
+        //General
+        attackRange = 15f;
 
         //HUD
         actionPoints = actionPointsMaximum;
@@ -127,7 +130,11 @@ public class UnitController : MonoBehaviour
 
     ///////////////////////////////////////////////////////////////////////////////
     /////////////////////////// Attack Section ////////////////////////////////////
-    
+
+
+  
+
+
     void GetEnemies()
     {
         enemiesInRange.Clear();
@@ -135,37 +142,41 @@ public class UnitController : MonoBehaviour
         foreach (UnitController unitController in FindObjectsOfType<UnitController>())
         {
             /////////////////////////// Get the enemys which are in range ///////////////////////////////transform.localScale = Vector3.zero;
-            
-            if (something == true) //Enter the attackrange here
-            {
+            //Debug.Log(unitController.transform.position);
 
-                Debug.Log("leckerlecker");
+            float DistanceToEnemeyChecker = Vector3.Distance(unitController.transform.position, transform.position);
+
+            if (DistanceToEnemeyChecker < 15f) //Enter the attackrange here
+            {
                 if (unitController.playerNumber != gm.playerTurn) //Avoid Friendly Fire and add if we have sufficient Ap points to attack
                 {
-                   
+                    Debug.Log(DistanceToEnemeyChecker);
                     enemiesInRange.Add(unitController);
+
                 }
             }
         }
     }
 
-
-
-
-
-
+    ///////////////////////////////////////////////////////////////////////////////
+    /////////////////////////// Attack Section End ////////////////////////////////
 
     void Update()
     {
-        enemyRange = thePath.GetPathRemainingDistancetoEnemies();
+
         moveRange = agent.GetPathRemainingDistance();
         calMoveRange = thePath.GetPathRemainingDistance2();
+
+
+
+
+
 
         if (gm.selectedUnit == this)
         {
 
             //////////////////////////////////// Calculated Path //////////////////////////////////////
-            
+
             if (agent.isStopped == true) { 
 
                 RaycastHit distance;
@@ -184,7 +195,7 @@ public class UnitController : MonoBehaviour
 
             textActionPoints.text = "Action Points: " + Mathf.Round(actionPoints * 10) / 10;
 
-            Debug.Log(actionPoints);
+            //Debug.Log(actionPoints);
             if (agent.isStopped == true && calMoveRange <= actionPoints) //Pathline dosen't redraw until Unit arrives destination 
             {
                 Ray ray = cam.ScreenPointToRay(Input.mousePosition);
@@ -286,23 +297,6 @@ public static class ExtensionMethods
             distance += Vector3.Distance(navMeshPath.corners[i], navMeshPath.corners[i + 1]);
         }
         
-        //Debug.Log(distance);
-        return distance;
-    }
-
-    public static float GetPathRemainingDistancetoEnemies(this NavMeshPath navMeshPath)
-    {
-        if (navMeshPath.status != NavMeshPathStatus.PathComplete || navMeshPath.corners.Length == 0)
-        {
-            return 100f;
-        }
-
-        float distance = 0.0f;
-        for (int i = 0; i < navMeshPath.corners.Length - 1; ++i)
-        {
-            distance += Vector3.Distance(navMeshPath.corners[i], navMeshPath.corners[i + 1]);
-        }
-
         //Debug.Log(distance);
         return distance;
     }
