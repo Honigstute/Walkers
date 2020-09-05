@@ -48,6 +48,7 @@ public class GameMaster : MonoBehaviour
         {
             unitController.transform.Find("Sphere").gameObject.SetActive(false); //RED SELECTION SPHERE
             unitController.actionPoints = unitController.actionPointsMaximum;
+            unitController.cursorProjector.enabled = false;
         }
     }
 }

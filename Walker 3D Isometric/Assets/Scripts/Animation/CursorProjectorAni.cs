@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CursorProjector : MonoBehaviour
+public class CursorProjectorAni : MonoBehaviour
 {
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -13,6 +15,7 @@ public class CursorProjector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
+       
     }
 }

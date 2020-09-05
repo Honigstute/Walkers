@@ -146,6 +146,7 @@ LineRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -263,9 +264,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemiesInRange: []
   actionPoints: 0
-  actionPointsMaximum: 0
+  actionPointsMaximum: 24
   textActionPoints: {fileID: 0}
   attackRange: 0
+  destination: {fileID: 0}
+  enemyRange: 0
   moveRange: 0
   calMoveRange: 0
   textMoveRange: {fileID: 0}
@@ -279,6 +282,7 @@ MonoBehaviour:
   worldPosition: {x: 0, y: 0, z: 0}
   cam: {fileID: 0}
   character: {fileID: 622904532674071954}
+  cursorProjector: {fileID: 0}
 --- !u!1 &5219655321995836856
 GameObject:
   m_ObjectHideFlags: 0
@@ -335,6 +339,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -359,6 +364,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!135 &8009065460609024418
 SphereCollider:
   m_ObjectHideFlags: 0

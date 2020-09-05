@@ -43,10 +43,14 @@ public class UnitController : MonoBehaviour
     public Vector3 worldPosition;
     public Camera cam;
     public ThirdPersonCharacter character;
-    private LineRenderer lineRendererPath; //The line which is been drawn along the Path
 
-    private Transform cursorProjector;
-        
+
+    //Path & Indicating Objects
+    private LineRenderer lineRendererPath; //The line which is been drawn along the Path
+    public Transform cursorProjectorTF;
+    public Projector cursorProjector;
+    public GameObject cursorProjectorGmOb;
+    public Animator anim;
 
     private void Start()
     {
@@ -76,6 +80,13 @@ public class UnitController : MonoBehaviour
 
         //Displays the red selection ball
         transform.Find("Sphere").gameObject.SetActive(false);
+
+        //CrossHair Projector to the Ground
+        cursorProjectorGmOb = GameObject.Find("CursorProjector"); //Find the Gameobject to Access it
+        cursorProjectorTF = cursorProjectorGmOb.GetComponent<Transform>(); //Connect the MousePositon to the Projector
+        cursorProjector = cursorProjectorGmOb.GetComponent<Projector>(); //Projector Component on/off Switch 
+        cursorProjector.enabled = false; //Disable by Default
+        
     }
 
 
@@ -91,6 +102,7 @@ public class UnitController : MonoBehaviour
             selected = false;
             gm.selectedUnit = null; 
             transform.Find("Sphere").gameObject.SetActive(false); //RED SELECTION SPHERE (would be removed)
+            cursorProjector.enabled = false;
 
         } else //We clicked on a unselected Unit 
         {
@@ -103,6 +115,8 @@ public class UnitController : MonoBehaviour
                 {
                     gm.selectedUnit.selected = false;
                     gm.selectedUnit.transform.Find("Sphere").gameObject.SetActive(false); //RED SELECTION SPHERE (would be removed)
+
+                    
                 }
 
                 selected = true;
@@ -118,6 +132,7 @@ public class UnitController : MonoBehaviour
 
     void GetWalkableRange()
     {
+
         if (hasMoved == true)
         {
             return;
@@ -163,17 +178,13 @@ public class UnitController : MonoBehaviour
 
     void Update()
     {
-
         moveRange = agent.GetPathRemainingDistance();
         calMoveRange = thePath.GetPathRemainingDistance2();
 
-
-
-
-
-
         if (gm.selectedUnit == this)
         {
+
+            anim = cursorProjectorGmOb.GetComponent<Animator>();
 
             //////////////////////////////////// Calculated Path //////////////////////////////////////
 
@@ -189,13 +200,11 @@ public class UnitController : MonoBehaviour
                 NavMesh.CalculatePath(transform.position, worldPosition, NavMesh.AllAreas, thePath);
           
                 for (int i = 0; i < thePath.corners.Length - 1; i++) { Debug.DrawLine(thePath.corners[i], thePath.corners[i + 1], Color.red); } // Draws the calculate Path
-            }
-
+            } 
             //////////////////////////////////// SetPath //////////////////////////////////////////////
 
             textActionPoints.text = "Action Points: " + Mathf.Round(actionPoints * 10) / 10;
 
-            //Debug.Log(actionPoints);
             if (agent.isStopped == true && calMoveRange <= actionPoints) //Pathline dosen't redraw until Unit arrives destination 
             {
                 Ray ray = cam.ScreenPointToRay(Input.mousePosition);
@@ -205,15 +214,38 @@ public class UnitController : MonoBehaviour
                 {
                     agent.SetDestination(hit.point);
                 }
-                // Displaying the Path
+                //Displaying the Path
                 lineRendererPath.positionCount = agent.path.corners.Length;
                 lineRendererPath.SetPositions(agent.path.corners);
                 lineRendererPath.enabled = true;
-            } else if(agent.isStopped == true && calMoveRange >= actionPoints)
+
+                //Matching Cursor Projector with Cursor Position
+                Ray rayForProjector = cam.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hitForProjector;
+
+
+                
+                if (Physics.Raycast(rayForProjector, out hitForProjector))
+                {
+                    //HACK Projecor position needs to be slightly off otherwise it dissapears
+                    cursorProjectorTF.position = hitForProjector.point;
+                    cursorProjectorTF.position = new Vector3(cursorProjectorTF.position.x, cursorProjectorTF.position.y + 0.5f /*Hack*/, cursorProjectorTF.position.z);
+                }
+
+                cursorProjector.enabled = true;
+                anim.enabled = true;
+            }
+            else if(agent.isStopped == true && calMoveRange >= actionPoints)
             {
                 agent.ResetPath(); // Fix for too much Movement range
-                lineRendererPath.enabled = false; 
+                lineRendererPath.enabled = false;
+                cursorProjector.enabled = false;
+
+            } else
+            {
+                anim.enabled = false;
             }
+            
 
             if (actionPoints <= 1) // switches of the line renderer if dont habe AP anymore
             {
@@ -234,15 +266,16 @@ public class UnitController : MonoBehaviour
                 textMoveRange.text = "Move Range: " + Mathf.Round(moveRange * 10) / 10;
             }
 
-        } else
+        }
+        else
         {
-
             ///////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////// Resetting Area after deselection ////////////////////////////
             
             initiateMovement = false;
             lineRendererPath.enabled = false;
-            selectionTimer = 0.2f; 
+            selectionTimer = 0.2f;
+
         }
 
         //statement checks if we reached our destination 
@@ -259,7 +292,6 @@ public class UnitController : MonoBehaviour
     }
 
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// RangeChecker /////////////////////////////////////////
