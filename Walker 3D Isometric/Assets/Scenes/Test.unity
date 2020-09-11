@@ -1224,18 +1224,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &908688976
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 908688974}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c821fb00eb871164ca89c75489ec933a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!195 &949197833 stripped
 NavMeshAgent:
   m_CorrespondingSourceObject: {fileID: 622904532674071982, guid: 5e0d82ccb7b601c4bb1754aaddfa8412,
@@ -2681,6 +2669,26 @@ PrefabInstance:
         type: 3}
       propertyPath: cursorProjector
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6701570365118128731, guid: 5e0d82ccb7b601c4bb1754aaddfa8412,
+        type: 3}
+      propertyPath: m_Orthographic
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6701570365125373113, guid: 5e0d82ccb7b601c4bb1754aaddfa8412,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.89
+      objectReference: {fileID: 0}
+    - target: {fileID: 6701570365125373113, guid: 5e0d82ccb7b601c4bb1754aaddfa8412,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.97
+      objectReference: {fileID: 0}
+    - target: {fileID: 6701570365125373113, guid: 5e0d82ccb7b601c4bb1754aaddfa8412,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.63
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e0d82ccb7b601c4bb1754aaddfa8412, type: 3}

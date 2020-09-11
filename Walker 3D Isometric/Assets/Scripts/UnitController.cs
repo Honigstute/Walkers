@@ -33,7 +33,7 @@ public class UnitController : MonoBehaviour
     public bool activateMovement; //Unlocks movement
     public bool initiateMovement; //Prevents the unit from moving by trying to selecting it
     public bool selected; //Marks a Unit as selected
-    public bool hasMoved; //Not in use
+    public bool blockMovement; //Not in use
     public int playerNumber; //Changes Team
 
     public NavMeshAgent agent; //The Unit itself
@@ -51,9 +51,24 @@ public class UnitController : MonoBehaviour
     public Projector cursorProjector;
     public GameObject cursorProjectorGmOb;
     public Animator anim;
+    public GameObject attackIndicator;
+
+    public int healthBody;
+    public int healthLegs;
+    public int healthLArm;
+    public int healthRegs;
+    public int attackDamage;
+    public int defenseDamage;
+    public int armor;
+
+    private UnitController unitControllerSelf;
+    
+
 
     private void Start()
     {
+
+        blockMovement = false;
         activateMovement = false;
         initiateMovement = false;
 
@@ -86,8 +101,8 @@ public class UnitController : MonoBehaviour
         cursorProjectorTF = cursorProjectorGmOb.GetComponent<Transform>(); //Connect the MousePositon to the Projector
         cursorProjector = cursorProjectorGmOb.GetComponent<Projector>(); //Projector Component on/off Switch 
         cursorProjector.enabled = false; //Disable by Default
-        
-    }
+
+}
 
 
 
@@ -95,7 +110,9 @@ public class UnitController : MonoBehaviour
     /////////////////////////// Selection Section /////////////////////////////////
     private void OnMouseDown()
     {
-        
+
+        ResetAttackIndicator();
+
         if (selected == true) //We click on a selected Unit
         {
             //Resetting Values
@@ -114,29 +131,28 @@ public class UnitController : MonoBehaviour
                 if (gm.selectedUnit != null) //Deselect any other Unit if I choose new Unit
                 {
                     gm.selectedUnit.selected = false;
-                    gm.selectedUnit.transform.Find("Sphere").gameObject.SetActive(false); //RED SELECTION SPHERE (would be removed)
-
-                    
+                    gm.selectedUnit.transform.Find("Sphere").gameObject.SetActive(false); //RED SELECTION SPHERE (would be removed)   
                 }
 
                 selected = true;
                 gm.selectedUnit = this;
                 transform.Find("Sphere").gameObject.SetActive(true); //RED SELECTION SPHERE (would be removed)
 
+                ResetAttackIndicator();
                 GetEnemies();
-
-                GetWalkableRange();
             }
         }
-    }
 
-    void GetWalkableRange()
-    {
+        unitControllerSelf = this.GetComponent<UnitController>(); //Gets the Unit which is been Clicked on
 
-        if (hasMoved == true)
-        {
-            return;
+        if (gm.selectedUnit != null) { 
+            if (gm.selectedUnit.enemiesInRange.Contains(unitControllerSelf) && gm.selectedUnit.actionPoints > 0) //Checks the enemiesInRange list
+            {
+                gm.selectedUnit.Attack(unitControllerSelf); //The Clicked Unit is been added to The Attack Function
+            }
         }
+        
+
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -147,29 +163,66 @@ public class UnitController : MonoBehaviour
     /////////////////////////// Attack Section ////////////////////////////////////
 
 
-  
+
+    void Attack(UnitController enemy)
+    {
+
+        int enemyDamage = attackDamage - enemy.armor;
+        int myDamage = enemy.defenseDamage - armor;
+
+        if (enemyDamage >= 1) //We Attacking 
+        {
+            enemy.healthBody -= enemyDamage;
+        }
+
+        if (myDamage >= 1) //We Get Attacked While Attacking
+        {
+            healthBody -= myDamage;
+        }
+
+        if (enemy.healthBody < 0)
+        {
+            Destroy(enemy.gameObject);
+        }
+
+        if (healthBody <= 0)
+        {
+            Destroy(this.gameObject);
+        }
+    }
 
 
     void GetEnemies()
     {
         enemiesInRange.Clear();
-
+        
         foreach (UnitController unitController in FindObjectsOfType<UnitController>())
         {
             /////////////////////////// Get the enemys which are in range ///////////////////////////////transform.localScale = Vector3.zero;
-            //Debug.Log(unitController.transform.position);
+            
 
             float DistanceToEnemeyChecker = Vector3.Distance(unitController.transform.position, transform.position);
-
-            if (DistanceToEnemeyChecker < 15f) //Enter the attackrange here
+            
+            if (DistanceToEnemeyChecker < 5f) //Enter the attackrange here
             {
                 if (unitController.playerNumber != gm.playerTurn) //Avoid Friendly Fire and add if we have sufficient Ap points to attack
                 {
-                    Debug.Log(DistanceToEnemeyChecker);
+                    //Debug.Log(DistanceToEnemeyChecker);
                     enemiesInRange.Add(unitController);
-
+                    unitController.attackIndicator.SetActive(true);
                 }
+            } else
+            {
+                unitController.attackIndicator.SetActive(false);
             }
+        }
+    }
+
+    public void ResetAttackIndicator()
+    {
+        foreach (UnitController unitController in FindObjectsOfType<UnitController>())
+        {
+            unitController.attackIndicator.SetActive(false);
         }
     }
 
@@ -178,15 +231,40 @@ public class UnitController : MonoBehaviour
 
     void Update()
     {
-        moveRange = agent.GetPathRemainingDistance();
+        moveRange = agent.GetPathRemainingDistance(); 
         calMoveRange = thePath.GetPathRemainingDistance2();
 
         if (gm.selectedUnit == this)
         {
 
-            anim = cursorProjectorGmOb.GetComponent<Animator>();
+            //////////////////////////////////// Prevent Pathsetting near Units //////////////////////////////
+            
+            Ray unitDetectionRay;
+            RaycastHit unitDetectionHit;
+            GameObject unitGotDetected;
+
+            unitDetectionRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(unitDetectionRay, out unitDetectionHit))
+            {
+                unitGotDetected = unitDetectionHit.collider.gameObject;
+
+                if (unitGotDetected.GetComponent<UnitController>() != null && agent.isStopped == true)
+                {
+                       
+                    blockMovement = true; //Prevents path beeing set (below) when the cursor hits any Unit
+                    agent.ResetPath(); 
+                    lineRendererPath.enabled = false;
+                    cursorProjector.enabled = false;
+                }
+                else
+                {
+                    blockMovement = false;
+                }
+            }
 
             //////////////////////////////////// Calculated Path //////////////////////////////////////
+
+            anim = cursorProjectorGmOb.GetComponent<Animator>();
 
             if (agent.isStopped == true) { 
 
@@ -205,7 +283,7 @@ public class UnitController : MonoBehaviour
 
             textActionPoints.text = "Action Points: " + Mathf.Round(actionPoints * 10) / 10;
 
-            if (agent.isStopped == true && calMoveRange <= actionPoints) //Pathline dosen't redraw until Unit arrives destination 
+            if (agent.isStopped == true && calMoveRange <= actionPoints && blockMovement == false) //Pathline dosen't redraw until Unit arrives destination 
             {
                 Ray ray = cam.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
@@ -237,12 +315,14 @@ public class UnitController : MonoBehaviour
             }
             else if(agent.isStopped == true && calMoveRange >= actionPoints)
             {
+
                 agent.ResetPath(); // Fix for too much Movement range
                 lineRendererPath.enabled = false;
                 cursorProjector.enabled = false;
 
             } else
             {
+                GetEnemies(); //Recalculating Enemy distance
                 anim.enabled = false;
             }
             
@@ -275,7 +355,6 @@ public class UnitController : MonoBehaviour
             initiateMovement = false;
             lineRendererPath.enabled = false;
             selectionTimer = 0.2f;
-
         }
 
         //statement checks if we reached our destination 
@@ -292,6 +371,7 @@ public class UnitController : MonoBehaviour
     }
 
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// RangeChecker /////////////////////////////////////////
